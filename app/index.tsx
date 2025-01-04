@@ -5,12 +5,15 @@ import { Stack } from "expo-router";
 import { useFonts, Poppins_500Medium,Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { useEffect } from "react";
 import * as SplashsScreen from 'expo-splash-screen'
+import { useRouter } from "expo-router";
 
 const {height, width} = Dimensions.get('window');
 
 SplashsScreen.preventAutoHideAsync();
 
 export default function Index() {
+  
+  const router = useRouter();
 
   const [loaded, error] = useFonts({
     Poppins_400Regular,
@@ -27,13 +30,19 @@ export default function Index() {
     return null;
   }
 
-  
+  const handleDone: () => void = () => {
+    router.replace('/Home')
+  }
 
   return (
     
     <View style={styles.container}>
       <Stack.Screen options={{headerShown: false}}/>
       <Onboarding
+      
+       onDone={handleDone}
+       onSkip={handleDone}
+
        titleStyles={{
         fontFamily: Platform.select({
           android: 'Poppins_500Medium',
