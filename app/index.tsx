@@ -31,7 +31,7 @@ export default function Index() {
   }
 
   const handleDone: () => void = () => {
-    router.replace('/Home')
+    router.replace('/sign_in')
   }
 
   return (

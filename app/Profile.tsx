@@ -50,7 +50,7 @@ export default function Profile() {
   
   
   const handleback = (): void => {
-    router.push('./Home')
+    router.replace('/Home')
   }
   return (
     <View style={styles.container}>
@@ -64,7 +64,7 @@ export default function Profile() {
       <Text style={styles.profiletxt}>Profile</Text>
       </View>
       
-      <Ionicons onPress={() => router.push('/Editprofile')} style={styles.editprofile} name='pencil' size={32}/>
+      <Ionicons onPress={() => router.replace('/Editprofile')} style={styles.editprofile} name='pencil' size={32}/>
       
       <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
       <View style={styles.namebio}>
@@ -99,14 +99,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: 60,
     borderColor: 'rgba(0,0,0,0.8)',
-    borderBottomWidth: 0.4
+    borderBottomWidth: 0.4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
   },
   backbtn : {
     position: 'absolute',
-    top: height * 0.02,
-    left: width * 0.02,
     backgroundColor: 'rgba(184, 176, 176, 0.39)',
     borderRadius: 7,
+    zIndex: 0
   },
   namebio : {
     alignItems: 'center'
@@ -153,8 +155,7 @@ const styles = StyleSheet.create({
     })
   },
   settingbtn : {
-    top : height * 0.02,
-    left: width * 0.88,
+    zIndex: 1,
   },
   postTab : {
     position: 'absolute',

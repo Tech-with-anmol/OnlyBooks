@@ -69,13 +69,13 @@ const styles = StyleSheet.create({
   backbtn : {
     position: 'absolute',
     top: height * 0.02,
-    left: width * 0.075,
+    left: width * 0.05,
     backgroundColor: 'rgba(184, 176, 176, 0.39)',
     borderRadius: 7,
   },
   Edittxt: {
     top: height * 0.01,
-    left: width * 0.3,
+    left: width * 0.27,
     fontFamily: Platform.select({
       android: 'DMSerifText_400Regular',
       ios: 'DMSerifText-Regular'
@@ -127,8 +127,12 @@ const styles = StyleSheet.create({
     width : 100,
     borderRadius: 80,
     top : height * 0.04,
-    left: width * 0.35,
-    zIndex: 1
+    alignSelf: 'center',
+    zIndex: 1,
+    shadowColor: '#000',
+    shadowRadius: 20,
+    shadowOffset: {height:10, width:10},
+    elevation: 10,
   },
   namelogo: {
     top: height * 0.11,
@@ -162,15 +166,17 @@ const styles = StyleSheet.create({
     left: width * 0.07,
   },
   savebtn: {
-    top: height * 0.45,
+    top: height * 0.2,
     left: width * 0.06,
     backgroundColor: 'rgba(105, 177, 211, 0.9)',
     borderRadius: 10,
     width: width * 0.9,
-    height: height * 0.047,
+    height: height * 0.06,
     justifyContent: 'center',
     shadowColor: '#000',
     shadowRadius: 20,
+    shadowOffset: {height:10, width:10},
+    elevation: 10,
   },
   savetxt: {
     textAlign: 'center',
