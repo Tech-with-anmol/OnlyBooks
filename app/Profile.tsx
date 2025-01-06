@@ -8,14 +8,38 @@ import {useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-tex
 import Library from '@/component/library';
 import Selfposts from '@/component/selfposts';
 import { Poppins_400Regular, Poppins_500Medium } from '@expo-google-fonts/poppins';
+import { client } from '@/lib/appwrite';
+import { Account } from '@/lib/appwrite';
 import Home from './Home';
 
 const {height, width} = Dimensions.get('window'); 
 
 export default function Profile() {
 
-  const [activetab, setactivetab] = useState('Posts')
+  const account = new Account(client);
+ 
+
+
+  const [activetab, setactivetab] = useState('Posts');
+  const [userdata, setuserdata] = useState({name : '', bio: ''})
+  
   const router = useRouter();
+  
+
+  useEffect(() => {
+    const data = async() => {
+      try {
+       const userData = await account.get();
+       setuserdata({
+        name : userData.name,
+        bio : userData.prefs.userbio
+       })  
+      } catch ( error ) {
+        
+      }
+    }
+    data();
+  })
 
   const renderTab = () => {
     if(activetab === 'Posts') {
@@ -68,14 +92,14 @@ export default function Profile() {
       
       <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
       <View style={styles.namebio}>
-      <Text style={styles.userName}>AkThelegendary</Text>
-      <Text style={styles.userBio}>This is BIo of meeeee!!!</Text>
+      <Text style={styles.userName}>{userdata.name}</Text>
+      <Text style={styles.userBio}>{userdata.bio}</Text>
       </View>
       <TouchableOpacity onPress={() => setactivetab('Posts')} >
-      <Ionicons  style={styles.postTab} name={activetab === 'Posts' ? 'grid' : 'grid-outline'} size={32}/>
+      <Ionicons  style={activetab === 'Posts' ? styles.ActivepostTab : styles.postTab} name={activetab === 'Posts' ? 'grid' : 'grid-outline'} size={32}/>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setactivetab('Library')}>
-      <Ionicons  style={styles.libraryTab} name={activetab === 'Library' ? 'book' : 'book-outline'} size={32}/>
+      <Ionicons  style={activetab === 'Library' ? styles.ActivelibraryTab : styles.libraryTab} name={activetab === 'Library' ? 'book' : 'book-outline'} size={32}/>
       </TouchableOpacity>
         {renderTab()}
     </View>
@@ -162,10 +186,23 @@ const styles = StyleSheet.create({
     top : height * 0.2,
     left: width * 0.2,
   },
+  ActivepostTab : {
+    position: 'absolute',
+    top: height * 0.2,
+    left : width * 0.2,
+    borderBottomWidth: 5,
+
+  },
   libraryTab : {
     position: 'absolute',
     top: height * 0.2,
     left: width * 0.7,
     
+  },
+  ActivelibraryTab : {
+    position: 'absolute',
+    top: height * 0.2,
+    left: width * 0.7,
+    borderBottomWidth: 5,
   },
 })

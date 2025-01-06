@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, View, StyleSheet, Dimensions, SafeAreaView, Platform } from "react-native";
 import Onboarding from 'react-native-onboarding-swiper'
 import LottieView from "lottie-react-native";
@@ -6,6 +7,7 @@ import { useFonts, Poppins_500Medium,Poppins_400Regular } from "@expo-google-fon
 import { useEffect } from "react";
 import * as SplashsScreen from 'expo-splash-screen'
 import { useRouter } from "expo-router";
+
 
 const {height, width} = Dimensions.get('window');
 
@@ -31,11 +33,10 @@ export default function Index() {
   }
 
   const handleDone: () => void = () => {
-    router.replace('/sign_in')
+    router.replace('/sign_up')
   }
 
   return (
-    
     <View style={styles.container}>
       <Stack.Screen options={{headerShown: false}}/>
       <Onboarding
@@ -110,7 +111,7 @@ export default function Index() {
        ]}
       />
     </View>
-    
+   
   );
 }
 
