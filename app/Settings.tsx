@@ -56,18 +56,20 @@ export default function Settings() {
   return (
     <View style={styles.container}>
       <View>
+      <View>
       <TouchableOpacity onPress={handleback}>
         <Ionicons style={styles.backbtn} name='chevron-back' size={36}/>
       </TouchableOpacity>
       </View>
-      <Text></Text>
+      </View>
+      
       <Text></Text>
       <Text></Text>
      <TouchableOpacity onPress={() => router.push('../setting/1')} style={styles.button}>
       <Text style={styles.text}>About</Text>
       <Ionicons style={styles.iconsa} name='chevron-forward' size={32}/>
      </TouchableOpacity>
-     <TouchableOpacity style={styles.button}>
+     <TouchableOpacity onPress={() => router.push('../setting/2')} style={styles.button}>
       <Text style={styles.text}>Feedback</Text>
       <Ionicons style={styles.iconsb} name='chevron-forward' size={32}/>
      </TouchableOpacity>
@@ -79,6 +81,7 @@ export default function Settings() {
       <Text style= {styles.text}>Log Out</Text>
       <Ionicons style={styles.icons} name='power' color="red" size={32}/>
      </TouchableOpacity>
+     
     </View>
   )
 }
@@ -89,11 +92,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   backbtn : {
-    position: 'absolute',
     top: height * 0.02,
     left: width * 0.05,
     backgroundColor: 'rgba(192, 187, 187, 0.39)',
     borderRadius: 7,
+    width: 37
   },
   button: {
     flexDirection: 'row',

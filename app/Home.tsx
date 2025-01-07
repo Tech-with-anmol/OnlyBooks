@@ -40,7 +40,7 @@ export default function Home() {
        <TouchableOpacity style={styles.notification}>
         <Ionicons name='heart-outline' size={32}/>
        </TouchableOpacity>
-       <TouchableOpacity style={styles.posticon}>
+       <TouchableOpacity onPress={() => router.push('/Post')} style={styles.posticon}>
         <Ionicons name='add-circle-outline' size={32}/>
        </TouchableOpacity>
        <TouchableOpacity style={styles.peopleicon} onPress={handleProfile}>
