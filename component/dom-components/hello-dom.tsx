@@ -1,6 +1,6 @@
 "use dom";
 import React from "react";
-import "./styles.css";
+import "../dom-components/style.css";
 
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
