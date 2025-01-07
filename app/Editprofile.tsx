@@ -1,22 +1,37 @@
 import { View, Text, StyleSheet, Dimensions, Platform, TextInput, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-text';
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router'
 import AntDesign from '@expo/vector-icons/AntDesign'
+import { client } from '@/lib/appwrite';
+import { Account, Databases, Query } from 'react-native-appwrite';
+import Toast from 'react-native-toast-message';
+
 
 const {height, width} = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
 export default function Editprofile() {
 
+  const account = new Account(client);
+  const databases = new Databases(client);
+
+  const[name, setname] = useState('');
+  const[bio, setbio] = useState('');
+  const[email, setemail] = useState('');
+  const[password, setpassword] = useState('');
+
+
+
   const router = useRouter();
 
   const[loaded, error] = useFonts({
     DMSerifText_400Regular
   });
+
 
   useEffect(() => {
     if(loaded || error) {
@@ -32,6 +47,51 @@ export default function Editprofile() {
     router.push('/Profile')
   }
   
+  const handlesave = async() => {
+    try {
+      const session = await account.get();
+      const docId = await databases.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
+        Query.equal('email', session.email)
+      ]);
+
+      if(name.length > 3){
+        await account.updateName(name);
+        
+        await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id,{
+          name: name,
+        })
+      }
+
+      if (bio.length > 0) {
+        await account.updatePrefs({userbio : bio})
+        await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id, {
+          bio: bio
+        })
+      }
+
+      if(email.includes('@') && password.length >= 8){
+        await account.updateEmail(email, password )
+        await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id, {
+          email : email
+        })
+      }
+
+      Toast.show({
+        type: 'success',
+        text1: 'Sucessfull',
+        text2: 'Your data has been updated'
+      })
+    } catch (error) {
+      console.log(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Failure',
+        text2: 'Please ensure correct information is entered'
+      })
+    }
+    router.back();
+    
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleback}>
@@ -43,18 +103,36 @@ export default function Editprofile() {
       <View>
         <View style={styles.input}>
           <AntDesign name='user' size={32}/>
-          <TextInput placeholder='Enter your name?'/>
+          <TextInput 
+          value={name}
+          onChangeText={setname}
+          placeholder='Enter new name'/>
         </View>
         <View style={styles.input}>
         <AntDesign  name='message1' size={32}/>
-        <TextInput  placeholder='Enter your Bio'/>
+        <TextInput 
+        multiline
+        value={bio}
+        onChangeText={setbio}
+        placeholder='Enter new Bio'/>
         </View>
         <View style={styles.inputpref}>
-        <AntDesign style={{marginTop:10}}name='bulb1' size={32}/>
-        <TextInput placeholder='Enter your prefrences for content'/>
+        <Ionicons name='mail-outline' size={32}/>
+        <TextInput 
+        value={email}
+        onChangeText={setemail}
+        placeholder='Enter new email'/>
+        </View>
+        <View style={styles.input}>
+          <Ionicons name='key-outline' size={32}/>
+          <TextInput 
+          value={password}
+          onChangeText={setpassword}
+          placeholder='Enter your password'/>
         </View>
       </View>
-      <TouchableOpacity style={styles.savebtn}>
+      <Text style={styles.note}>📩 : To update email, You must enter password</Text>
+      <TouchableOpacity onPress={handlesave} style={styles.savebtn}>
         <Text style={styles.savetxt}>Save</Text>
       </TouchableOpacity>
     </View>
@@ -109,8 +187,8 @@ const styles = StyleSheet.create({
   },
   inputpref: {
     flexDirection: 'row',
-    height: height * 0.2,
-    alignItems: 'flex-start',
+    height: height * 0.06,
+    alignItems: 'center',
     justifyContent: 'flex-start',
     borderWidth: 0.6,
     borderColor: 'rgba(124, 123, 123, 0.8)',
@@ -147,6 +225,17 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     width: width * 0.8
   },
+  note : {
+    position: 'absolute',
+    top: height * 0.64,
+    left: width * 0.08,
+    fontFamily: Platform.select({
+      android: 'Poppins_400Regular',
+      ios: 'Poppins-Regular',
+      
+    }),
+    
+  },
   prefHolder: {
     position: 'absolute',
     top: height * 0.3,
@@ -168,7 +257,7 @@ const styles = StyleSheet.create({
   savebtn: {
     top: height * 0.2,
     left: width * 0.06,
-    backgroundColor: 'rgba(105, 177, 211, 0.9)',
+    backgroundColor: 'rgba(157, 230, 157, 0.9)',
     borderRadius: 10,
     width: width * 0.9,
     height: height * 0.06,
@@ -180,7 +269,7 @@ const styles = StyleSheet.create({
   },
   savetxt: {
     textAlign: 'center',
-    color: '#fff',
+    color: 'rgba(37, 37, 37, 0.7)',
     fontWeight: '700',
     fontSize: 17,
   },

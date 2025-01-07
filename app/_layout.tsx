@@ -11,7 +11,6 @@ export default function RootLayout() {
       <Stack.Screen name="Profile" options={{headerShown: false}}/>
       <Stack.Screen name="Editprofile"/>
       <Stack.Screen name="Settings"/>
-      
     </Stack>
     <Toast/>
     </>

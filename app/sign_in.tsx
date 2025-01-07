@@ -23,14 +23,14 @@ export default function sign_in() {
   const handleContinue =  async() => {
     if(!email.includes('@')){
       Toast.show({
-        type: 'error',
+        type: 'info',
         text1: 'Wrong credentials',
         text2: 'Plese enter correct email adress'
       })
     }
     if(password.length <= 8) {
       Toast.show({
-        type: 'error',
+        type: 'info',
         text1: 'wrong credentials',
         text2: 'Please enter correct password'
       })

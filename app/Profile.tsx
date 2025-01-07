@@ -93,7 +93,9 @@ export default function Profile() {
       <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
       <View style={styles.namebio}>
       <Text style={styles.userName}>{userdata.name}</Text>
+      <View style={styles.bio}>
       <Text style={styles.userBio}>{userdata.bio}</Text>
+      </View>
       </View>
       <TouchableOpacity onPress={() => setactivetab('Posts')} >
       <Ionicons  style={activetab === 'Posts' ? styles.ActivepostTab : styles.postTab} name={activetab === 'Posts' ? 'grid' : 'grid-outline'} size={32}/>
@@ -135,7 +137,14 @@ const styles = StyleSheet.create({
     zIndex: 0
   },
   namebio : {
-    alignItems: 'center'
+    alignItems: 'center',
+    alignSelf: 'center',
+    
+  },
+  bio: {
+    alignItems: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
   editprofile: {
     position: 'absolute',

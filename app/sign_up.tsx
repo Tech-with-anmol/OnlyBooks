@@ -47,7 +47,7 @@ export default function sign_up() {
     console.log('handle strted');
     if (!email.includes('@')) {
       Toast.show({
-        type: 'error',
+        type: 'info',
         text1: 'Error',
         text2: 'Please enter correct email address'
       });
@@ -56,7 +56,7 @@ export default function sign_up() {
 
     if (password.length <= 8) {
       Toast.show({
-        type: 'error',
+        type: 'info',
         text1: 'Error',
         text2: 'Please enter password of more than 8 digits'
       });
@@ -65,7 +65,7 @@ export default function sign_up() {
 
     if (name.length <= 3) {
       Toast.show({
-        type: 'error',
+        type: 'info',
         text1: 'Error',
         text2: 'Please enter name longer than 3 digits'
       });
