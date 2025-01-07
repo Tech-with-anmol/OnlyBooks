@@ -15,7 +15,7 @@ import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TreeViewPlugin from "./plugins/TreeViewPlugin";
 import { $getRoot, EditorState, LexicalEditor } from "lexical";
 
-const placeholder = "Enter some rich text...";
+const placeholder = "Write whatever is in your mind...";
 
 const editorConfig = {
   namespace: "React.js Demo",

@@ -6,6 +6,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-text';
 import * as SplashScreen from 'expo-splash-screen'
 import DropDownPicker from 'react-native-dropdown-picker'
+import { router } from 'expo-router';
+import { client } from '@/lib/appwrite';
+import { Account, Databases } from 'react-native-appwrite';
+
 
 
 const IS_DOM = typeof Editor!== "undefined";
@@ -15,6 +19,21 @@ SplashScreen.preventAutoHideAsync();
 
 
 export default function Post() {
+
+  const[userData, setUserData] = useState({email: ''})
+
+  const account = new Account(client);
+  const database = new Databases(client);
+
+  useEffect(() => {
+    const getData = async() => {
+      const data = await account.get();
+      setUserData({
+        email: data.email
+      })
+    }
+    getData();
+  })
 
   const [open, setOpen] = useState(false);
   const[value, setValue] = useState(null);
@@ -42,15 +61,31 @@ export default function Post() {
   if(!loaded && !error){
     return null;
   }
-  
+
+  const handlePost = async() => {
+    try{
+        
+        await database.createDocument('677ad7c60012a997bf2c', '677d348300118c369c4c', 'unique()', {
+          email : userData.email,
+          content: plainText,
+    
+        });
+        router.replace('/Home')
+     } catch(error) {
+        
+     }
+  }
 
   return (
     <>
     <View style={styles.header}>
-      <TouchableOpacity style={styles.backbtn}>
+      <TouchableOpacity onPress={() => router.back()} style={styles.backbtn}>
         <Ionicons name='chevron-back' size={32}/>
       </TouchableOpacity>
       <Text style={styles.headerTxt}>Post</Text>
+      <TouchableOpacity onPress={handlePost}>
+        <Ionicons name='paper-plane-outline' size={32}/>
+      </TouchableOpacity>
     </View>
     <Text></Text>
     <DropDownPicker
