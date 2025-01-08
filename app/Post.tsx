@@ -20,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Post() {
 
-  const[userData, setUserData] = useState({email: ''})
+  const[userData, setUserData] = useState({email: '', name: ''})
 
   const account = new Account(client);
   const database = new Databases(client);
@@ -29,6 +29,7 @@ export default function Post() {
     const getData = async() => {
       const data = await account.get();
       setUserData({
+        name: data.name,
         email: data.email
       })
     }
@@ -66,6 +67,7 @@ export default function Post() {
     try{
         
         await database.createDocument('677ad7c60012a997bf2c', '677d348300118c369c4c', 'unique()', {
+          name : userData.name,
           email : userData.email,
           content: plainText,
     
