@@ -7,8 +7,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { client } from '@/lib/appwrite';
-import { Account, Databases, Query } from 'react-native-appwrite';
+import { Account, Databases, Query, Storage } from 'react-native-appwrite';
 import Toast from 'react-native-toast-message';
+import * as ImagePicker from 'expo-image-picker'
 
 
 const {height, width} = Dimensions.get('window');
@@ -18,11 +19,15 @@ export default function Editprofile() {
 
   const account = new Account(client);
   const databases = new Databases(client);
+  const storage = new Storage(client);
 
   const[name, setname] = useState('');
   const[bio, setbio] = useState('');
   const[email, setemail] = useState('');
   const[password, setpassword] = useState('');
+  const[aimage, setImage] = useState<String | null>(null);
+
+
 
 
 
@@ -47,6 +52,31 @@ export default function Editprofile() {
     router.push('/Profile')
   }
   
+
+  const AvatarHandle = async() => {
+    let avatar = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4,3],
+      quality: 1,
+    })
+
+    if(!avatar.canceled) {
+      setImage(avatar.assets[0].uri);
+      const sessione = await account.get();
+      try {
+        const response = await fetch(avatar.assets[0].uri);
+        const blob = await response.blob();
+        console.log(blob);
+        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+        const uploadedFile = await storage.createFile('677bb99f002da2a90c33','unique()', file);
+        console.log("File uploaded successfully:", uploadedFile)
+      } catch (error) {
+        console.log("Error uploading file:", error);
+      }
+    }
+  }
+
   const handlesave = async() => {
     try {
       const session = await account.get();
@@ -99,7 +129,7 @@ export default function Editprofile() {
       </TouchableOpacity>
       <Text style={styles.Edittxt}>Edit profile</Text>
       <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
-      
+      <Ionicons onPress={AvatarHandle} style={styles.cameraIcon} name='camera' size={32}/>
       <View>
         <View style={styles.input}>
           <AntDesign name='user' size={32}/>
@@ -211,6 +241,20 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     shadowOffset: {height:10, width:10},
     elevation: 10,
+  },
+  cameraIcon: {
+    position: 'absolute',
+    top: height * 0.18,
+    left: width * 0.56,
+    zIndex: 2,
+    backgroundColor: 'rgba(224, 221, 221, 0.35)',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {height: 10, width: 10},
+    shadowOpacity: 0.9,
+    shadowRadius: 10,
+    elevation: 8,
+
   },
   namelogo: {
     top: height * 0.11,

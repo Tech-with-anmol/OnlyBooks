@@ -33,7 +33,13 @@
           "backgroundColor": "#000"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "If you want to upload profile picture, please approve this permission."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
