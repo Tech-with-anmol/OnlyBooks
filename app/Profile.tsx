@@ -10,18 +10,18 @@ import Selfposts from '@/component/selfposts';
 import { Poppins_400Regular, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { client } from '@/lib/appwrite';
 import { Account } from '@/lib/appwrite';
-import Home from './Home';
+import { Databases, Query } from 'react-native-appwrite';
 
 const {height, width} = Dimensions.get('window'); 
 
 export default function Profile() {
 
   const account = new Account(client);
- 
+  const database = new Databases(client);
 
 
   const [activetab, setactivetab] = useState('Posts');
-  const [userdata, setuserdata] = useState({name : '', bio: ''})
+  const [userdata, setuserdata] = useState({name : '', bio: '', avatar: ''})
   
   const router = useRouter();
   
@@ -30,9 +30,13 @@ export default function Profile() {
     const data = async() => {
       try {
        const userData = await account.get();
+       const userAv = await database.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
+        Query.equal('email', userData.email)
+       ])
        setuserdata({
         name : userData.name,
-        bio : userData.prefs.userbio
+        bio : userData.prefs.userbio,
+        avatar: userAv.documents[0].avatar
        })  
       } catch ( error ) {
         
@@ -90,7 +94,7 @@ export default function Profile() {
       
       <Ionicons onPress={() => router.replace('/Editprofile')} style={styles.editprofile} name='pencil' size={32}/>
       
-      <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
+      <Image style={styles.avatar} source={{uri: `${userdata.avatar}`}}/>
       <View style={styles.namebio}>
       <Text style={styles.userName}>{userdata.name}</Text>
       <View style={styles.bio}>
@@ -115,10 +119,10 @@ const styles = StyleSheet.create({
   },
   avatar : {
     height: height * 0.2,
-    width : width * 0.3,
+    width : width * 0.4,
     borderRadius: 80,
-    top : height * 0.03,
-    left: width * 0.35,
+    alignSelf: 'center',
+    marginTop: height * 0.03,
     zIndex: 1
   },
   header: {
@@ -148,7 +152,7 @@ const styles = StyleSheet.create({
   },
   editprofile: {
     position: 'absolute',
-    marginLeft: width * 0.57,
+    marginLeft: width * 0.6,
     marginTop: height * 0.1,
     borderRadius: 7,
     backgroundColor: 'white',
@@ -166,12 +170,12 @@ const styles = StyleSheet.create({
       ios: 'Poppins-Medium'
     }),
     position: 'absolute',
-    top: height * 0.05,
+    top: height * 0.025,
   },
   userBio : {
     fontSize: 15,
     position: 'absolute',
-    top : height * 0.1,
+    top : height * 0.06,
     fontFamily: Platform.select({
       android : 'Poppins_400Regular',
       ios: 'Poppins-Regular'

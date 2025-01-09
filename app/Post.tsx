@@ -66,11 +66,14 @@ export default function Post() {
   const handlePost = async() => {
     try{
         
-        await database.createDocument('677ad7c60012a997bf2c', '677d348300118c369c4c', 'unique()', {
+        const newpost = await database.createDocument('677ad7c60012a997bf2c', '677d348300118c369c4c', 'unique()', {
           name : userData.name,
           email : userData.email,
           content: plainText,
-    
+        });
+        
+        await database.createDocument('677ad7c60012a997bf2c', '69', newpost.$id , {
+          name : userData.name,
         });
         router.replace('/Home')
      } catch(error) {
