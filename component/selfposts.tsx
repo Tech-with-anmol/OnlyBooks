@@ -1,29 +1,53 @@
-import { View, Text, StyleSheet, Dimensions, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, FlatList, Image, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { client } from '@/lib/appwrite';
 import { Account, Databases, Query } from 'react-native-appwrite';
+import { useFonts, Poppins_500Medium } from '@expo-google-fonts/poppins';
+import * as SplashScreen from 'expo-splash-screen';
 
 const { height, width } = Dimensions.get('window');
+SplashScreen.preventAutoHideAsync();
 
 export default function Selfposts() {
   const account = new Account(client);
   const database = new Databases(client);
   const [posts, setPosts] = useState([]);
 
+  const [loaded, error] = useFonts({
+    Poppins_500Medium
+  });
+
   useEffect(() => {
     const loadPost = async () => {
       const postCollection = await fetchSelfPost();
+      
       setPosts(postCollection);
     };
     loadPost();
   }, []);
 
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
+
+  const fetchtimedate = (datetime) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(datetime).toLocaleDateString(undefined, options);
+  };
+
   const fetchSelfPost = async () => {
     try {
       const holder = await account.get();
-      const posts = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
+      const posts = await database.listDocuments('677ad7c60012a997bf2c', '677d348300118c369c4c', [
         Query.equal('email', holder.email),
       ]);
+
       return posts.documents;
     } catch (error) {
       console.log(error);
@@ -31,6 +55,7 @@ export default function Selfposts() {
   };
 
   const renderPost = ({ item }) => {
+
     return (
       <Post item={item} />
     );
@@ -43,7 +68,7 @@ export default function Selfposts() {
       ]);
       return userData.documents[0];
     } catch (error) {
-      console.log(error);
+    
       return null;
     }
   };
@@ -59,16 +84,30 @@ export default function Selfposts() {
       loadUserData();
     }, [item.email]);
 
+   
+
     return (
       <View style={styles.postContainer}>
-        {user && <Image source={{ uri: user.avatar }} style={styles.avatar} />}
+        <View style={styles.postHeader}>
+          {user && <Image source={{ uri: user.avatar }} style={styles.userAvatar} />}
+          <View style={styles.postDetails}>
+            <Text style={{
+              marginLeft: 5,
+              fontFamily: Platform.select({
+                android: 'Poppins_500Medium',
+                ios: 'Poppins-Medium'
+              })
+            }}>{item.name}</Text>
+            <Text>{fetchtimedate(item.$createdAt)}</Text>
+          </View>
+        </View>
         <Text style={styles.postText}>{item.content}</Text>
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.$id}
@@ -101,10 +140,14 @@ const styles = StyleSheet.create({
   postText: {
     fontSize: 16,
   },
-  avatar: {
-    width: 50,
+  userAvatar: {
     height: 50,
-    borderRadius: 25,
-    marginBottom: 10,
+    width: 50,
+    borderRadius: 50,
   },
+  postHeader: {
+    flexDirection: 'row',
+    gap: 5,
+  },
+  postDetails: {},
 });
