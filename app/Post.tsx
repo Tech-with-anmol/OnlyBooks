@@ -8,7 +8,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { router } from 'expo-router';
 import { client } from '@/lib/appwrite';
-import { Account, Databases } from 'react-native-appwrite';
+import { Account, Databases, Query } from 'react-native-appwrite';
 
 
 
@@ -65,19 +65,23 @@ export default function Post() {
 
   const handlePost = async() => {
     try{
-        
+        const userAv = await database.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
+                Query.equal('email', userData.email)
+        ])
         const newpost = await database.createDocument('677ad7c60012a997bf2c', '677d348300118c369c4c', 'unique()', {
           name : userData.name,
           email : userData.email,
           content: plainText,
+          
         });
         
         await database.createDocument('677ad7c60012a997bf2c', '69', newpost.$id , {
           name : userData.name,
+          avatar : userAv.documents[0].avatar
         });
         router.replace('/Home')
      } catch(error) {
-        
+        console.log(error)
      }
   }
 

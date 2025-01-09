@@ -1,129 +1,130 @@
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import * as SplashScreen from 'expo-splash-screen'
-import {useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-text'
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-text';
 import Library from '@/component/library';
 import Selfposts from '@/component/selfposts';
 import { Poppins_400Regular, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { client } from '@/lib/appwrite';
-import { Account } from '@/lib/appwrite';
-import { Databases, Query } from 'react-native-appwrite';
+import { Account, Databases, Query } from 'react-native-appwrite';
 
-const {height, width} = Dimensions.get('window'); 
+const { height, width } = Dimensions.get('window');
 
 export default function Profile() {
-
   const account = new Account(client);
   const database = new Databases(client);
 
-
   const [activetab, setactivetab] = useState('Posts');
-  const [userdata, setuserdata] = useState({name : '', bio: '', avatar: ''})
-  
+  const [userdata, setuserdata] = useState({ name: '', bio: '', avatar: '' });
+
   const router = useRouter();
-  
 
   useEffect(() => {
-    const data = async() => {
+    const data = async () => {
       try {
-       const userData = await account.get();
-       const userAv = await database.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
-        Query.equal('email', userData.email)
-       ])
-       setuserdata({
-        name : userData.name,
-        bio : userData.prefs.userbio,
-        avatar: userAv.documents[0].avatar
-       })  
-      } catch ( error ) {
-        
+        const userData = await account.get();
+        const userAv = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
+          Query.equal('email', userData.email),
+        ]);
+        setuserdata({
+          name: userData.name,
+          bio: userData.prefs.userbio,
+          avatar: userAv.documents[0].avatar,
+        });
+      } catch (error) {
+        console.log(error);
       }
-    }
+    };
     data();
-  })
-
+  }, []);
+  
   const renderTab = () => {
-    if(activetab === 'Posts') {
-      return(
-        <Selfposts/>
-      );
+    if (activetab === 'Posts') {
+      return <Selfposts />;
     }
-    if(activetab === 'Library') {
-      return(
+    if (activetab === 'Library') {
+      return (
         <View>
-          <Library/>
+          <Library />
         </View>
       );
     }
   };
 
   const [loaded, error] = useFonts({
-        DMSerifText_400Regular,
-        Poppins_400Regular,
-        Poppins_500Medium
-      });
-    
-      useEffect(() => {
-        if(loaded || error) {
-          SplashScreen.hideAsync();
-        }
-      }, [loaded, error]);
-      
-      if(!loaded && !error) {
-        return null;
-      }
-  
-  
-  const handleback = (): void => {
-    router.replace('/Home')
+    DMSerifText_400Regular,
+    Poppins_400Regular,
+    Poppins_500Medium,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
   }
+
+  const handleback = (): void => {
+    router.replace('/Home');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={handleback}>
-      <Ionicons  style={styles.backbtn} name='chevron-back' size={32}/>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/Settings')}>
-      <Ionicons  style={styles.settingbtn} name='cog-outline' size={32}/>
-      </TouchableOpacity>
-      <Text style={styles.profiletxt}>Profile</Text>
+        <TouchableOpacity onPress={handleback}>
+          <Ionicons style={styles.backbtn} name="chevron-back" size={32} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/Settings')}>
+          <Ionicons style={styles.settingbtn} name="cog-outline" size={32} />
+        </TouchableOpacity>
+        <Text style={styles.profiletxt}>Profile</Text>
       </View>
-      
-      <Ionicons onPress={() => router.replace('/Editprofile')} style={styles.editprofile} name='pencil' size={32}/>
-      
-      <Image style={styles.avatar} source={{uri: `${userdata.avatar}`}}/>
+
+      <Ionicons onPress={() => router.replace('/Editprofile')} style={styles.editprofile} name="pencil" size={32} />
+
+      <Image style={styles.avatar} source={{ uri: `${userdata.avatar}` }} />
       <View style={styles.namebio}>
-      <Text style={styles.userName}>{userdata.name}</Text>
-      <View style={styles.bio}>
-      <Text style={styles.userBio}>{userdata.bio}</Text>
+        <Text style={styles.userName}>{userdata.name}</Text>
+        <View style={styles.bio}>
+          <Text style={styles.userBio}>{userdata.bio}</Text>
+        </View>
       </View>
-      </View>
-      <TouchableOpacity onPress={() => setactivetab('Posts')} >
-      <Ionicons  style={activetab === 'Posts' ? styles.ActivepostTab : styles.postTab} name={activetab === 'Posts' ? 'grid' : 'grid-outline'} size={32}/>
+      <TouchableOpacity onPress={() => setactivetab('Posts')}>
+        <Ionicons
+          style={activetab === 'Posts' ? styles.ActivepostTab : styles.postTab}
+          name={activetab === 'Posts' ? 'grid' : 'grid-outline'}
+          size={32}
+        />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setactivetab('Library')}>
-      <Ionicons  style={activetab === 'Library' ? styles.ActivelibraryTab : styles.libraryTab} name={activetab === 'Library' ? 'book' : 'book-outline'} size={32}/>
+        <Ionicons
+          style={activetab === 'Library' ? styles.ActivelibraryTab : styles.libraryTab}
+          name={activetab === 'Library' ? 'book' : 'book-outline'}
+          size={32}
+        />
       </TouchableOpacity>
-        {renderTab()}
+      <View style={{ marginTop: 230 }}>{renderTab()}</View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
-  avatar : {
+  avatar: {
     height: height * 0.2,
-    width : width * 0.4,
+    width: width * 0.4,
     borderRadius: 80,
     alignSelf: 'center',
     marginTop: height * 0.03,
-    zIndex: 1
+    zIndex: 1,
   },
   header: {
     backgroundColor: '#fff',
@@ -134,16 +135,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
   },
-  backbtn : {
+  backbtn: {
     position: 'absolute',
     backgroundColor: 'rgba(184, 176, 176, 0.39)',
     borderRadius: 7,
-    zIndex: 0
+    zIndex: 0,
   },
-  namebio : {
+  namebio: {
     alignItems: 'center',
     alignSelf: 'center',
-    
   },
   bio: {
     alignItems: 'center',
@@ -163,59 +163,57 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 10,
   },
-  userName : {
+  userName: {
     fontSize: 17,
-    fontFamily:Platform.select({
-      android : 'Poppins_500Medium',
-      ios: 'Poppins-Medium'
+    fontFamily: Platform.select({
+      android: 'Poppins_500Medium',
+      ios: 'Poppins-Medium',
     }),
     position: 'absolute',
     top: height * 0.025,
   },
-  userBio : {
+  userBio: {
     fontSize: 15,
     position: 'absolute',
-    top : height * 0.06,
+    top: height * 0.06,
     fontFamily: Platform.select({
-      android : 'Poppins_400Regular',
-      ios: 'Poppins-Regular'
+      android: 'Poppins_400Regular',
+      ios: 'Poppins-Regular',
     }),
   },
-  profiletxt : {
+  profiletxt: {
     position: 'absolute',
     top: height * 0.02,
     left: width * 0.13,
     fontSize: 23,
     fontFamily: Platform.select({
       android: 'DMSerifText_400Regular',
-      ios: 'DMSerifText-Regular'
-    })
+      ios: 'DMSerifText-Regular',
+    }),
   },
-  settingbtn : {
+  settingbtn: {
     zIndex: 1,
   },
-  postTab : {
+  postTab: {
     position: 'absolute',
-    top : height * 0.2,
+    top: height * 0.2,
     left: width * 0.2,
   },
-  ActivepostTab : {
+  ActivepostTab: {
     position: 'absolute',
     top: height * 0.2,
-    left : width * 0.2,
+    left: width * 0.2,
     borderBottomWidth: 5,
-
   },
-  libraryTab : {
+  libraryTab: {
     position: 'absolute',
     top: height * 0.2,
     left: width * 0.7,
-    
   },
-  ActivelibraryTab : {
+  ActivelibraryTab: {
     position: 'absolute',
     top: height * 0.2,
     left: width * 0.7,
     borderBottomWidth: 5,
   },
-})
+});
