@@ -1,164 +1,153 @@
-import { View, Text, StyleSheet, Dimensions, Platform, TextInput, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, Dimensions, Platform, TextInput, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { useFonts, DMSerifText_400Regular } from '@expo-google-fonts/dm-serif-text';
-import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRouter } from 'expo-router'
-import AntDesign from '@expo/vector-icons/AntDesign'
+import { useRouter } from 'expo-router';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { client } from '@/lib/appwrite';
 import { Account, Databases, Query, Storage } from 'react-native-appwrite';
 import Toast from 'react-native-toast-message';
-import * as ImagePicker from 'expo-image-picker'
+import * as ImagePicker from 'expo-image-picker';
 
-
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
 export default function Editprofile() {
-
   const account = new Account(client);
   const databases = new Databases(client);
   const storage = new Storage(client);
 
-  const[name, setname] = useState('');
-  const[bio, setbio] = useState('');
-  const[email, setemail] = useState('');
-  const[password, setpassword] = useState('');
-  const[aimage, setImage] = useState<String | null>(null);
-
-
-
-
+  const [name, setname] = useState('');
+  const [bio, setbio] = useState('');
+  const [email, setemail] = useState('');
+  const [password, setpassword] = useState('');
+  const [userData, setUserData] = useState({ email: '', name: '', avatar : '' });
+  const [image, setimage] = useState('');
 
   const router = useRouter();
 
-  const[loaded, error] = useFonts({
+  useEffect(() => {
+    const getData = async () => {
+      const data = await account.get();
+      const av = await databases.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
+        Query.equal('email', data.email)
+      ]);
+      const avatardata = await databases.getDocument('677ad7c60012a997bf2c','677ad7d000244716f3a6', av.documents[0].$id)
+      setUserData({
+        name: data.name,
+        email: data.email,
+        avatar : avatardata.avatar
+      });
+    };
+    getData();
+  }, []);
+
+  const [loaded, error] = useFonts({
     DMSerifText_400Regular
   });
 
-
   useEffect(() => {
-    if(loaded || error) {
+    if (loaded || error) {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
 
-  if(!loaded && !error) {
+  if (!loaded && !error) {
     return null;
   }
 
-  const handleback = ():void => {
-    router.push('/Profile')
-  }
-  
+  const handleback = (): void => {
+    router.push('/Profile');
+  };
 
-  const AvatarHandle = async() => {
-    let avatar = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4,3],
-      quality: 1,
-    })
 
-    if(!avatar.canceled) {
-      setImage(avatar.assets[0].uri);
-      const sessione = await account.get();
-      try {
-        const response = await fetch(avatar.assets[0].uri);
-        const blob = await response.blob();
-        console.log(blob);
-        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-        const uploadedFile = await storage.createFile('677bb99f002da2a90c33','unique()', file);
-        console.log("File uploaded successfully:", uploadedFile)
-      } catch (error) {
-        console.log("Error uploading file:", error);
-      }
-    }
-  }
 
-  const handlesave = async() => {
+
+  const handlesave = async () => {
     try {
       const session = await account.get();
       const docId = await databases.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
         Query.equal('email', session.email)
       ]);
+      
 
-      if(name.length > 3){
+      if (name.length > 3) {
         await account.updateName(name);
-        
-        await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id,{
+
+        await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id, {
           name: name,
-        })
+        });
       }
 
       if (bio.length > 0) {
-        await account.updatePrefs({userbio : bio})
+        await account.updatePrefs({ userbio: bio });
         await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id, {
           bio: bio
-        })
+        });
       }
 
-      if(email.includes('@') && password.length >= 8){
-        await account.updateEmail(email, password )
+      if (email.includes('@') && password.length >= 8) {
+        await account.updateEmail(email, password);
         await databases.updateDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', docId.documents[0].$id, {
-          email : email
-        })
+          email: email
+        });
       }
 
       Toast.show({
         type: 'success',
-        text1: 'Sucessfull',
+        text1: 'Successful',
         text2: 'Your data has been updated'
-      })
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       Toast.show({
         type: 'error',
         text1: 'Failure',
         text2: 'Please ensure correct information is entered'
-      })
+      });
     }
     router.back();
-    
-  }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleback}>
-        <Ionicons style={styles.backbtn} name='chevron-back' size={32}/>
+        <Ionicons style={styles.backbtn} name='chevron-back' size={32} />
       </TouchableOpacity>
       <Text style={styles.Edittxt}>Edit profile</Text>
-      <Image style={styles.avatar} source={{uri: `https://avatar.iran.liara.run/public`}}/>
-      <Ionicons onPress={AvatarHandle} style={styles.cameraIcon} name='camera' size={32}/>
+      <Image style={styles.avatar} source={{ uri: `${userData.avatar}` }} />
+      <Ionicons style={styles.cameraIcon} name='camera' size={32} />
+      {image && <Image source={{ uri: image }} style={styles.Avatarimage} />}
       <View>
         <View style={styles.input}>
-          <AntDesign name='user' size={32}/>
-          <TextInput 
-          value={name}
-          onChangeText={setname}
-          placeholder='Enter new name'/>
+          <AntDesign name='user' size={32} />
+          <TextInput
+            value={name}
+            onChangeText={setname}
+            placeholder='Enter new name' />
         </View>
         <View style={styles.input}>
-        <AntDesign  name='message1' size={32}/>
-        <TextInput 
-        multiline
-        value={bio}
-        onChangeText={setbio}
-        placeholder='Enter new Bio'/>
+          <AntDesign name='message1' size={32} />
+          <TextInput
+            multiline
+            value={bio}
+            onChangeText={setbio}
+            placeholder='Enter new Bio' />
         </View>
         <View style={styles.inputpref}>
-        <Ionicons name='mail-outline' size={32}/>
-        <TextInput 
-        value={email}
-        onChangeText={setemail}
-        placeholder='Enter new email'/>
+          <Ionicons name='mail-outline' size={32} />
+          <TextInput
+            value={email}
+            onChangeText={setemail}
+            placeholder='Enter new email' />
         </View>
         <View style={styles.input}>
-          <Ionicons name='key-outline' size={32}/>
-          <TextInput 
-          value={password}
-          onChangeText={setpassword}
-          placeholder='Enter your password'/>
+          <Ionicons name='key-outline' size={32} />
+          <TextInput
+            value={password}
+            onChangeText={setpassword}
+            placeholder='Enter your password' />
         </View>
       </View>
       <Text style={styles.note}>📩 : To update email, You must enter password</Text>
@@ -166,15 +155,15 @@ export default function Editprofile() {
         <Text style={styles.savetxt}>Save</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex : 1,
+    flex: 1,
     backgroundColor: '#fff',
   },
-  backbtn : {
+  backbtn: {
     position: 'absolute',
     top: height * 0.02,
     left: width * 0.05,
@@ -199,7 +188,6 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     width: width * 0.8
   },
-
   input: {
     flexDirection: 'row',
     height: height * 0.06,
@@ -214,6 +202,10 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     top: height * 0.1,
     marginTop: 20,
+  },
+  Avatarimage: {
+    height: 100,
+    width: 100,
   },
   inputpref: {
     flexDirection: 'row',
@@ -230,16 +222,16 @@ const styles = StyleSheet.create({
     top: height * 0.1,
     marginTop: 20,
   },
-  avatar : {
+  avatar: {
     height: 100,
-    width : 100,
+    width: 100,
     borderRadius: 80,
-    top : height * 0.04,
+    top: height * 0.04,
     alignSelf: 'center',
     zIndex: 1,
     shadowColor: '#000',
     shadowRadius: 20,
-    shadowOffset: {height:10, width:10},
+    shadowOffset: { height: 10, width: 10 },
     elevation: 10,
   },
   cameraIcon: {
@@ -250,11 +242,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(224, 221, 221, 0.35)',
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {height: 10, width: 10},
+    shadowOffset: { height: 10, width: 10 },
     shadowOpacity: 0.9,
     shadowRadius: 10,
     elevation: 8,
-
   },
   namelogo: {
     top: height * 0.11,
@@ -269,16 +260,16 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     width: width * 0.8
   },
-  note : {
+  note: {
     position: 'absolute',
     top: height * 0.64,
     left: width * 0.08,
     fontFamily: Platform.select({
       android: 'Poppins_400Regular',
       ios: 'Poppins-Regular',
-      
+
     }),
-    
+
   },
   prefHolder: {
     position: 'absolute',
@@ -308,7 +299,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: '#000',
     shadowRadius: 20,
-    shadowOffset: {height:10, width:10},
+    shadowOffset: { height: 10, width: 10 },
     elevation: 10,
   },
   savetxt: {
@@ -317,4 +308,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 17,
   },
-})
+});

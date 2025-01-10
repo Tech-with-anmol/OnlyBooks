@@ -8,16 +8,21 @@ import Library from '@/component/library';
 import Selfposts from '@/component/selfposts';
 import { Poppins_400Regular, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { client } from '@/lib/appwrite';
-import { Account, Databases, Query } from 'react-native-appwrite';
+import { Account, Databases, Query, Storage } from 'react-native-appwrite';
 
 const { height, width } = Dimensions.get('window');
 
 export default function Profile() {
+
+
   const account = new Account(client);
   const database = new Databases(client);
+  const storage = new Storage(client);
 
   const [activetab, setactivetab] = useState('Posts');
-  const [userdata, setuserdata] = useState({ name: '', bio: '', avatar: '' });
+  const [userdata, setuserdata] = useState({ name: '', bio: '' , avatar : ''});
+  const [Avatar, setAvatar] = useState('');
+
 
   const router = useRouter();
 
@@ -25,13 +30,14 @@ export default function Profile() {
     const data = async () => {
       try {
         const userData = await account.get();
-        const userAv = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
-          Query.equal('email', userData.email),
+        const av = await database.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
+          Query.equal('email', userData.email)
         ]);
+        const avatardata = await database.getDocument('677ad7c60012a997bf2c','677ad7d000244716f3a6', av.documents[0].$id)
         setuserdata({
           name: userData.name,
           bio: userData.prefs.userbio,
-          avatar: userAv.documents[0].avatar,
+          avatar : avatardata.avatar
         });
       } catch (error) {
         console.log(error);

@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Poppins_600SemiBold, Poppins_500Medium, Poppins_300Light } from '@expo-google-fonts/poppins';
 import Fetchposts from '@/component/fetch-posts';
 import { client } from '@/lib/appwrite';
-import { Account, Databases, Query } from 'react-native-appwrite';
+import { Account, Databases, Query , Storage} from 'react-native-appwrite';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { formatDistanceToNow } from 'date-fns'
@@ -27,10 +27,12 @@ export default function Home() {
   const [comments, setComments] = useState([]);
   const [commentPost, setcommentPost] = useState('');
   const [currentPostId, setCurrentPostId] = useState(null);
+  
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const database = new Databases(client);
   const account = new Account(client);
+  const storage = new Storage(client);
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log(index);
@@ -51,6 +53,7 @@ export default function Home() {
   useEffect(() => {
     const loadPosts = async () => {
       const postData = await Fetchposts();
+      const data = await account.get();
       setPosts(postData);
     };
     loadPosts();
@@ -184,6 +187,7 @@ export default function Home() {
   
   const Post = ({ item, likedPosts, handleLike, handleComments }) => {
     const [user, setUser] = useState(null);
+    const [imageUri, setImageUri] = useState('');
   
     useEffect(() => {
       const loadUserData = async () => {
@@ -192,6 +196,20 @@ export default function Home() {
       };
       loadUserData();
     }, [item.email]);
+
+    useEffect(() => {
+      const fetchImage = async () => {
+        if (item.images) {
+          try {
+            const image = await storage.getFileDownload('1230', item.images);
+            setImageUri(image.href);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      };
+      fetchImage();
+    }, [item.images]);
   
     const isLiked = likedPosts[item.$id];
   
@@ -207,7 +225,12 @@ export default function Home() {
           </View>
         </View>
         <Text></Text>
+       
         <Text>{item.content}</Text>
+        <Text></Text>
+        {imageUri && (
+        <Image source={{ uri: imageUri }} style={{ height: 300, width: 300 }} />
+      )}
         <Text></Text>
         <View style={styles.bottomNav}>
           <TouchableOpacity onPress={() => handleLike(item.$id, item.likes)}>

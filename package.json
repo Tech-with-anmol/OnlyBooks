@@ -22,6 +22,7 @@
     "@gorhom/bottom-sheet": "^5",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
+    "axios": "^1.7.9",
     "create-react-class": "^15.7.0",
     "date-fns": "^4.1.0",
     "expo": "~52.0.23",

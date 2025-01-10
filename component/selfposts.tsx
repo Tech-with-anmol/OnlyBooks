@@ -2,8 +2,9 @@ import { View, Text, StyleSheet, Dimensions, FlatList, Image, Platform } from 'r
 import React, { useEffect, useState } from 'react';
 import { client } from '@/lib/appwrite';
 import { Account, Databases, Query } from 'react-native-appwrite';
-import { useFonts, Poppins_500Medium } from '@expo-google-fonts/poppins';
+import { useFonts, Poppins_500Medium, Poppins_300Light } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { height, width } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
@@ -14,7 +15,8 @@ export default function Selfposts() {
   const [posts, setPosts] = useState([]);
 
   const [loaded, error] = useFonts({
-    Poppins_500Medium
+    Poppins_500Medium,
+    Poppins_300Light
   });
 
   useEffect(() => {
@@ -98,10 +100,33 @@ export default function Selfposts() {
                 ios: 'Poppins-Medium'
               })
             }}>{item.name}</Text>
-            <Text>{fetchtimedate(item.$createdAt)}</Text>
+            <Text style={{
+              fontFamily: Platform.select({
+                android: 'Poppins_300Light',
+                ios: 'Poppins-Light'
+              })
+            }}>{fetchtimedate(item.$createdAt)}</Text>
           </View>
         </View>
+        <Text></Text>
         <Text style={styles.postText}>{item.content}</Text>
+        <Text></Text>
+        <View style={styles.bottomNav}>
+          
+          <Ionicons style={{
+            marginTop: 7,
+          }} name='heart-outline' size={32}/>
+          <Ionicons style={{
+            marginTop: 7
+          }}name='chatbubble-outline' size={26}/>
+          <Ionicons style={{
+            marginTop: 7
+          }}name='share-outline' size={26}/>
+          <Ionicons style={{
+            marginLeft: 190,
+            marginTop: 7,
+          }} name='bookmark-outline' size={26}/>
+        </View>
       </View>
     );
   };
@@ -118,10 +143,6 @@ export default function Selfposts() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   postContainer: {
     flex: 1,
     padding: 10,
@@ -150,4 +171,11 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   postDetails: {},
+  bottomNav: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    gap: 15,
+    borderTopWidth: 0.2,
+  },
 });
