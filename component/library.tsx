@@ -13,7 +13,7 @@ import { getDate } from 'date-fns';
 const { height, width } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
-export default function Library() {
+export default function Library({email}) {
   const account = new Account(client);
   const database = new Databases(client);
 
@@ -53,7 +53,7 @@ export default function Library() {
     const fetchLibrary = async () => {
       const userData = await account.get();
       const userBooks = await database.listDocuments('677ad7c60012a997bf2c', '677d348300118c369c4c', [
-        Query.equal('email', userData.email),
+        Query.equal('email', email),
         Query.isNotNull('Book')
       ]);
 

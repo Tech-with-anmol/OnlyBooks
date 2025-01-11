@@ -168,7 +168,8 @@ export default function Home() {
 
   const sharePost = async(Content) => {
     await Share.share({
-      message: Content
+      message: Content,
+      
     })
   }
 
@@ -216,9 +217,11 @@ export default function Home() {
     return (
       <View style={styles.card}>
         <View style={styles.postHeader}>
+          <TouchableOpacity onPress={() => router.push(`/profileView/${item.email}`)}>
           {user && (
             <Image style={styles.pfpHome} source={{ uri: user.avatar }} />
           )}
+          </TouchableOpacity>
           <View style={styles.userInfo}>
             <Text style={styles.authorName}>{item.name}</Text>
             <Text style={styles.dateTime}>{formatDate(item.$createdAt)}</Text>
@@ -306,7 +309,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(242, 242, 242, 0.9)',
+    backgroundColor: 'rgba(241, 231, 216, 0.78)',
   },
   logo: {
     flex: 1,
@@ -361,7 +364,7 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: 10,
-    backgroundColor: 'rgb(252, 252, 252)',
+    backgroundColor: 'rgb(248, 247, 246)',
     borderRadius: 5,
     margin: 10,
     marginRight: 14,

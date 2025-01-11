@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getDate } from 'date-fns';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 const { height, width } = Dimensions.get('window');
@@ -80,7 +81,9 @@ export default function Library() {
     fetchLibrary();
   }, []);
 
-  
+  const handleBack = () => {
+    router.back();
+  }
 
   const renderItem = ({ item, index }) => (
     <View style={styles.bookContainer}>
@@ -92,7 +95,13 @@ export default function Library() {
   );
 
   return (
-    <View>
+    <View style={styles.container}>
+    <View style={styles.header}>
+      <TouchableOpacity onPress={handleBack}>
+        <Ionicons style={styles.backbtn} name="chevron-back" size={32} />
+      </TouchableOpacity>
+      <Text style={styles.profiletxt}>Library</Text>
+    </View>
     <FlatList
       data={bookCollection}
       renderItem={renderItem}
@@ -105,6 +114,11 @@ export default function Library() {
 }
 
 const styles = StyleSheet.create({
+  container : {
+    flex: 1,
+    backgroundColor: 'rgba(248, 233, 221, 0.9)',
+    
+  },
   listContainer: {
     paddingHorizontal: 10,
   },
@@ -112,7 +126,6 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     alignItems: 'center',
-    
   },
   bookImage: {
     height: 185,
@@ -132,5 +145,33 @@ const styles = StyleSheet.create({
       android: 'Poppins_500Medium',
       ios: 'Poppins-Medium'
     })
+  },
+  header: {
+    backgroundColor: 'rgba(240, 234, 224, 0.9)',
+    height: 60,
+    borderColor: 'rgba(0,0,0,0.8)',
+    borderBottomWidth: 0.4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  backbtn: {
+    position: 'absolute',
+    backgroundColor: 'rgba(184, 176, 176, 0.39)',
+    borderRadius: 7,
+    zIndex: 0,
+  },
+  profiletxt: {
+    position: 'absolute',
+    top: height * 0.02,
+    left: width * 0.13,
+    fontSize: 23,
+    fontFamily: Platform.select({
+      android: 'DMSerifText_400Regular',
+      ios: 'DMSerifText-Regular',
+    }),
+  },
+  settingbtn: {
+    zIndex: 1,
   },
 });

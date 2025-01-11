@@ -22,6 +22,7 @@ export default function Profile() {
   const [activetab, setactivetab] = useState('Posts');
   const [userdata, setuserdata] = useState({ name: '', bio: '' , avatar : ''});
   const [Avatar, setAvatar] = useState('');
+  const [userDataAccount, setUserDataAccount] = useState({email : '', name: ''});
 
 
   const router = useRouter();
@@ -30,6 +31,10 @@ export default function Profile() {
     const data = async () => {
       try {
         const userData = await account.get();
+        setUserDataAccount({
+          email: userData.email,
+          name: userData.email
+        })
         const av = await database.listDocuments('677ad7c60012a997bf2c','677ad7d000244716f3a6', [
           Query.equal('email', userData.email)
         ]);
@@ -47,13 +52,15 @@ export default function Profile() {
   }, []);
   
   const renderTab = () => {
+
+
     if (activetab === 'Posts') {
-      return <Selfposts />;
+      return <Selfposts email={userDataAccount.email} />;
     }
     if (activetab === 'Library') {
       return (
         <View>
-          <Library />
+          <Library email={userDataAccount.email}/>
         </View>
       );
     }

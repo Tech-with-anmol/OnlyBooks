@@ -9,24 +9,24 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 const { height, width } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
-export default function Selfposts() {
+export default function Selfposts({ email }) {
   const account = new Account(client);
   const database = new Databases(client);
   const [posts, setPosts] = useState([]);
 
   const [loaded, error] = useFonts({
     Poppins_500Medium,
-    Poppins_300Light
+    Poppins_300Light,
   });
 
   useEffect(() => {
     const loadPost = async () => {
       const postCollection = await fetchSelfPost();
-      
+     
       setPosts(postCollection);
     };
     loadPost();
-  }, []);
+  }, [email]);
 
   useEffect(() => {
     if (loaded || error) {
@@ -45,32 +45,27 @@ export default function Selfposts() {
 
   const fetchSelfPost = async () => {
     try {
-      const holder = await account.get();
       const posts = await database.listDocuments('677ad7c60012a997bf2c', '677d348300118c369c4c', [
-        Query.equal('email', holder.email),
+        Query.equal('email', email),
       ]);
-
+     
       return posts.documents;
     } catch (error) {
-      console.log(error);
+     
     }
   };
 
   const renderPost = ({ item }) => {
-
-    return (
-      <Post item={item} />
-    );
+    return <Post item={item} />;
   };
 
   const fetchUserData = async (email) => {
     try {
       const userData = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
-        Query.equal('email', email)
+        Query.equal('email', email),
       ]);
       return userData.documents[0];
     } catch (error) {
-    
       return null;
     }
   };
@@ -86,46 +81,42 @@ export default function Selfposts() {
       loadUserData();
     }, [item.email]);
 
-   
-
     return (
       <View style={styles.postContainer}>
         <View style={styles.postHeader}>
           {user && <Image source={{ uri: user.avatar }} style={styles.userAvatar} />}
           <View style={styles.postDetails}>
-            <Text style={{
-              marginLeft: 5,
-              fontFamily: Platform.select({
-                android: 'Poppins_500Medium',
-                ios: 'Poppins-Medium'
-              })
-            }}>{item.name}</Text>
-            <Text style={{
-              fontFamily: Platform.select({
-                android: 'Poppins_300Light',
-                ios: 'Poppins-Light'
-              })
-            }}>{fetchtimedate(item.$createdAt)}</Text>
+            <Text
+              style={{
+                marginLeft: 5,
+                fontFamily: Platform.select({
+                  android: 'Poppins_500Medium',
+                  ios: 'Poppins-Medium',
+                }),
+              }}
+            >
+              {item.name}
+            </Text>
+            <Text
+              style={{
+                fontFamily: Platform.select({
+                  android: 'Poppins_300Light',
+                  ios: 'Poppins-Light',
+                }),
+              }}
+            >
+              {fetchtimedate(item.$createdAt)}
+            </Text>
           </View>
         </View>
         <Text></Text>
         <Text style={styles.postText}>{item.content}</Text>
         <Text></Text>
         <View style={styles.bottomNav}>
-          
-          <Ionicons style={{
-            marginTop: 7,
-          }} name='heart-outline' size={32}/>
-          <Ionicons style={{
-            marginTop: 7
-          }}name='chatbubble-outline' size={26}/>
-          <Ionicons style={{
-            marginTop: 7
-          }}name='share-outline' size={26}/>
-          <Ionicons style={{
-            marginLeft: 190,
-            marginTop: 7,
-          }} name='bookmark-outline' size={26}/>
+          <Ionicons style={{ marginTop: 7 }} name="heart-outline" size={32} />
+          <Ionicons style={{ marginTop: 7 }} name="chatbubble-outline" size={26} />
+          <Ionicons style={{ marginTop: 7 }} name="share-outline" size={26} />
+          <Ionicons style={{ marginLeft: 190, marginTop: 7 }} name="bookmark-outline" size={26} />
         </View>
       </View>
     );
@@ -133,17 +124,18 @@ export default function Selfposts() {
 
   return (
     <View>
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => item.$id}
-        renderItem={renderPost}
-      />
+      <FlatList 
+      data={posts} 
+      keyExtractor={(item) => item.$id} 
+      renderItem={renderPost}
+      contentContainerStyle={{paddingBottom: 20}} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   postContainer: {
+    
     flex: 1,
     padding: 10,
     flexDirection: 'column',
