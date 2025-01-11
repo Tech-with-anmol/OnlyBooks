@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack.Screen name="Editprofile"/>
       <Stack.Screen name="Settings"/>
       <Stack.Screen name="Post"/>
+      <Stack.Screen name='library'/>
     </Stack>
     <Toast/>
     </>

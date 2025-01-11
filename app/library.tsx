@@ -93,20 +93,6 @@ export default function Library() {
 
   return (
     <View>
-    <TouchableOpacity onPress={() => router.push('/library')} style={{
-      left: 275,
-      borderWidth: 0.6,
-      borderColor: '#000',
-      borderRadius: 20,
-      width: 80,
-      height: 30,
-      justifyContent: 'center',
-
-    }}>
-      <Text style={{
-        marginLeft: 6,
-      }}>View All -></Text>
-    </TouchableOpacity>
     <FlatList
       data={bookCollection}
       renderItem={renderItem}
