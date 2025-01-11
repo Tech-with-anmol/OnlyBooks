@@ -20,8 +20,10 @@ export default function ProfileView() {
   const router = useRouter();
 
   const [activetab, setactivetab] = useState('Posts');
-  const [userData, setUserData] = useState({ name: '', email: '', avatar: '', bio: '' });
+  const [userData, setUserData] = useState({ name: '', email: '', avatar: '', bio: '', followers: [], following: '' });
   const [isFollowing, setIsFollowing] = useState(false);
+  const [totalFollowers, setTotalFollowers] = useState(0);
+  const [totalFollowing, setTotalFollowing] = useState(0);
 
 
   const [loaded, error] = useFonts({
@@ -42,6 +44,8 @@ export default function ProfileView() {
           email: detailsDoc.email,
           avatar: detailsDoc.avatar,
           bio: detailsDoc.bio,
+          followers: detailsDoc.followers,
+          following : detailsDoc.following
         });
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -64,7 +68,7 @@ export default function ProfileView() {
 
         const currentFollowing = userFile.documents[0].following || [];
         setIsFollowing(currentFollowing.includes(userData.email));
-      
+        
       } catch (error) {
         console.log(error);
       }
@@ -160,12 +164,12 @@ export default function ProfileView() {
           <Text style={styles.userBio}>{userData.bio}</Text>
         </View>
         <View style={styles.followSection}>
-          <TouchableOpacity>
-            <Text style={styles.followNumber}>10</Text>
+          <TouchableOpacity onPress={() => router.push(`/following/${userData.email}`)}>
+            <Text style={styles.followNumber}>{userData.following.length}</Text>
             <Text style={styles.followText}>following</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.followNumber}>5</Text>
+          <TouchableOpacity onPress={() => router.push(`/followers/${userData.email}`)}>
+            <Text style={styles.followNumber}>{userData.followers.length}</Text>
             <Text style={styles.followText}>followers</Text>
           </TouchableOpacity>
         </View>
