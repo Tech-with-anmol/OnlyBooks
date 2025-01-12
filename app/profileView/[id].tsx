@@ -153,7 +153,7 @@ export default function ProfileView() {
           <TouchableOpacity onPress={handleback}>
             <Ionicons style={styles.backbtn} name="chevron-back" size={32} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/Settings')}>
+          <TouchableOpacity onPress={() => router.push(`/DM/${userData.email}`)}>
             <Ionicons style={styles.settingbtn} name="chatbox-ellipses-outline" size={28} />
           </TouchableOpacity>
           <Text style={styles.profiletxt}>Profile</Text>

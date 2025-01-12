@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions, Platform, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Platform, TouchableOpacity, Image, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { useFonts, Poppins_400Regular } from '@expo-google-fonts/poppins';
@@ -17,6 +17,7 @@ export default function Followers() {
   const router = useRouter();
 
   const [userData, setUserData] = useState({ name: '', email: '', avatar: '', bio: '', followers: [] });
+  const [followersDetails, setFollowersDetails] = useState<any[]>([]);
 
   const [loaded, error] = useFonts({
     Poppins_400Regular,
@@ -38,6 +39,16 @@ export default function Followers() {
           bio: detailsDoc.bio,
           followers: detailsDoc.followers,
         });
+
+        const followersDetailsPromises = detailsDoc.followers.map(async (email) => {
+          const userDetails = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
+            Query.equal('email', email)
+          ]);
+          return userDetails.documents[0];
+        });
+
+        const followersDetails = await Promise.all(followersDetailsPromises);
+        setFollowersDetails(followersDetails);
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -60,30 +71,38 @@ export default function Followers() {
     router.back();
   };
 
-  const renderFollower = ({ item }) => (
-    <View style={styles.followerItem}>
-      <Text style={styles.followerText}>{item}</Text>
-    </View>
-  );
+  const renderFollower = ({ item }) => {
+    if (!item || !item.avatar || !item.name) {
+      return null;
+    }
+
+    return (
+      <View style={styles.followerItem}>
+        <TouchableOpacity onPress={() => router.push(`/profileView/${item.email}`)}>
+          <View style={{ flexDirection: 'row', gap: 20 }}>
+            <Image style={styles.avatar} source={{ uri: `${item.avatar}` }} />
+            <Text style={styles.followerText}>{item.name}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   const renderContent = () => {
     return (
-      <ScrollView style={styles.container}>
+      <View>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleback}>
             <Ionicons style={styles.backbtn} name="chevron-back" size={32} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/Settings')}>
-            <Ionicons style={styles.settingbtn} name="chatbox-ellipses-outline" size={28} />
-          </TouchableOpacity>
           <Text style={styles.profiletxt}>Profile</Text>
         </View>
         <FlatList
-          data={userData.followers}
+          data={followersDetails}
           renderItem={renderFollower}
           keyExtractor={(item, index) => index.toString()}
         />
-      </ScrollView>
+      </View>
     );
   };
 
@@ -93,12 +112,12 @@ export default function Followers() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(241, 235, 220, 0.9)',
   },
   header: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(253, 249, 241, 0.9)',
     height: 60,
-    borderColor: 'rgba(0,0,0,0.8)',
+    borderColor: 'rgba(0, 0, 0, 0.8)',
     borderBottomWidth: 0.4,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -110,6 +129,11 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     zIndex: 0,
   },
+  avatar: {
+    height: 50,
+    width: 50,
+    borderRadius: 20,
+  },
   profiletxt: {
     position: 'absolute',
     top: height * 0.02,
@@ -120,16 +144,15 @@ const styles = StyleSheet.create({
       ios: 'DMSerifText-Regular',
     }),
   },
-  settingbtn: {
-    zIndex: 1,
-  },
   followerItem: {
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
   followerText: {
-    fontSize: 16,
+    fontSize: 18,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     fontFamily: Platform.select({
       android: 'Poppins_400Regular',
       ios: 'Poppins-Regular',
