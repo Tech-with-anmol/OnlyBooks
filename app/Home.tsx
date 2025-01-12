@@ -257,8 +257,8 @@ export default function Home() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.logotxt}>OnlyBooks</Text>
-      <TouchableOpacity style={styles.notification}>
-        <Ionicons name='heart-outline' size={32} />
+      <TouchableOpacity onPress={() => router.push('/search')} style={styles.notification}>
+        <Ionicons name='search-outline' size={32} />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push('/Post')} style={styles.posticon}>
         <Ionicons name='add-circle-outline' size={32} />

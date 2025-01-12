@@ -17,6 +17,7 @@ export default function RootLayout() {
       <Stack.Screen name='followers/[id]'/>
       <Stack.Screen name='following/[id]'/>
       <Stack.Screen name='DM/[id]'/>
+      <Stack.Screen name='search'/>
     </Stack>
     <Toast/>
     </>
