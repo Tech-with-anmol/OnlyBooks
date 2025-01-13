@@ -1,6 +1,6 @@
 #  OnlyBooks
 
-<img src="https://raw.githubusercontent.com/Tech-with-anmol/OnlyBooks/refs/heads/main/assets/images/icon.png"/>
+![Logo](https://raw.githubusercontent.com/Tech-with-anmol/OnlyBooks/refs/heads/main/assets/images/icon.png)
 
 
  <a href="https://github.com/badges/Tech-with-anmol/OnlyBooks" alt="Activity">
