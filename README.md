@@ -1,12 +1,17 @@
 #  OnlyBooks
 
+<img src="https://raw.githubusercontent.com/Tech-with-anmol/OnlyBooks/refs/heads/main/assets/images/icon1x.png"/>
+
+
+---
+
  <a href="https://github.com/badges/Tech-with-anmol/OnlyBooks" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/Tech-with-anmol/OnlyBooks" /></a>  
         
 ![version](https://img.shields.io/badge/version-0.0.5-blue)
 ![Maintain](https://img.shields.io/badge/Maintained-No-red)
 ![Usage](https://img.shields.io/badge/Using_This-Read_Below-red)
-<a href="https://github.com/Tech-with-anmol/OnlyBooks/blob/main/License.md">
+<a href="https://github.com/Tech-with-anmol/OnlyBooks/blob/main/LICENSE.md">
 ![License](https://img.shields.io/badge/License-Click_here-red)</a>
 
 ### **Introduction** 
