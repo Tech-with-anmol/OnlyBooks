@@ -1,6 +1,9 @@
 import React from "react";
 import { Stack } from "expo-router";
 import Toast from "react-native-toast-message";
+import { LogBox } from "react-native";
+
+LogBox.ignoreAllLogs(true);
 
 export default function RootLayout() {
   return (

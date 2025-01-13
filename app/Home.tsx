@@ -35,7 +35,7 @@ export default function Home() {
   const storage = new Storage(client);
 
   const handleSheetChanges = useCallback((index: number) => {
-    console.log(index);
+    
   }, []);
 
   const [loaded, error] = useFonts({

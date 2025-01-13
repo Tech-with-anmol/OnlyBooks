@@ -50,7 +50,7 @@ export default function Settings() {
   }
   
   const handleback = () => {
-    console.log('fuck nvm')
+  
     router.back();
   }
   return (

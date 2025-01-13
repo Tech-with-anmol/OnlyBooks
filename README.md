@@ -49,6 +49,25 @@ OnlyBooks
 - assests - all aseests and images for app
 - lib - basic sdk setup
 
+### Building Locally
+
+---
+
+ As i have used expo managed workflow so you can build via running
+
+ ```bash
+ eas build --platform android/ios
+ ```
+ 
+ If you want bare react native project
+ ```bash
+ expo eject
+```
+>You will also need to modify dependencies and manage builds
+
+- expo-media-picker
+- expo-router
+- go through dependii to confirm all the expo packages
 ### Text Editor 
  ---
  I have used expo workflow for making app due to limitations of my computer. So, expo isn't bad tho but yet it is, with expo over time limitations start hitting hard.

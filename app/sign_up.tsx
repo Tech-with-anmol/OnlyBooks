@@ -44,7 +44,7 @@ export default function sign_up() {
 
   const handleContinue = async() => {
 
-    console.log('handle strted');
+    
     if (!email.includes('@')) {
       Toast.show({
         type: 'info',
@@ -74,12 +74,11 @@ export default function sign_up() {
     
     setdone(true);
 
-    console.log ('',{userId, email, password, name,bio})
     try {
-      console.log('process started bro!!')
+      
       await account.create('unique()', email, password, name);
       
-      console.log('check 1: ', {email, password})
+   
       await account.createEmailPasswordSession(email,password);
       await account.updatePrefs({userbio : bio})
       Toast.show({
@@ -87,7 +86,7 @@ export default function sign_up() {
         text1: 'Account created',
         text2: 'Account successfully created'
       });
-      console.log('only dbleft')
+     
       const session = await account.get();
       setuserId(session.$id)
       await databases.createDocument('677ad7c60012a997bf2c', '677ad7d000244716f3a6', 'unique()', {
