@@ -1,9 +1,7 @@
 #  OnlyBooks
 
-<img src="https://raw.githubusercontent.com/Tech-with-anmol/OnlyBooks/refs/heads/main/assets/images/icon1x.png"/>
+<img src="https://raw.githubusercontent.com/Tech-with-anmol/OnlyBooks/refs/heads/main/assets/images/icon.png"/>
 
-
----
 
  <a href="https://github.com/badges/Tech-with-anmol/OnlyBooks" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/Tech-with-anmol/OnlyBooks" /></a>  
@@ -14,6 +12,7 @@
 <a href="https://github.com/Tech-with-anmol/OnlyBooks/blob/main/LICENSE.md">
 ![License](https://img.shields.io/badge/License-Click_here-red)</a>
 
+---
 ### **Introduction** 
 
    >**OnlyBooks is a niche exclusive social media, restricting content only to Education/Research and Books powered with exclusive features like Library, domain-specific posting and suggestion.**
