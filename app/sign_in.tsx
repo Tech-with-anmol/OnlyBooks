@@ -67,7 +67,7 @@ export default function sign_in() {
 
   return (
     <View>
-      <Image style={styles.Logo} source={require('../assets/images/icon.png')}/>
+      <Image style={styles.Logo} source={require('../assets/images/icon1x.png')}/>
       <Text style={styles.welcometxt}>Welcome Back</Text>
       <Text></Text>
       <View style={styles.input}>

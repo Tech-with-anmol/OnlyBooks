@@ -131,7 +131,7 @@ export default function sign_up() {
   return (
     <View style={styles.container}>
       <ScrollView>
-      <Image style={styles.Logo} source={require('../assets/images/icon.png')}/>
+      <Image style={styles.Logo} source={require('../assets/images/icon1x.png')}/>
       <Text style={styles.welcometxt}>Welcome to OnlyBooks!</Text>
       <View >
         <View style={styles.input}>

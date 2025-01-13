@@ -20,11 +20,11 @@ const placeholder = "Write whatever is in your mind...";
 const editorConfig = {
   namespace: "React.js Demo",
   nodes: [],
-  // Handling of errors during update
+  
   onError(error: Error) {
     throw error;
   },
-  // The editor theme
+  
   theme: ExampleTheme,
 };
 export default function Editor({
