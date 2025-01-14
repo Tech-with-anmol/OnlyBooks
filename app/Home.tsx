@@ -257,6 +257,9 @@ export default function Home() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.logotxt}>OnlyBooks</Text>
+      <TouchableOpacity onPress={() => router.push('/bookclub')} style={styles.club}>
+        <Ionicons name='people-outline' size={34}/>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push('/ai')} style={styles.ai}>
         <Ionicons name='bulb-outline' size={30}/>
       </TouchableOpacity>
@@ -336,6 +339,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.02,
     left: width * 0.78,
+  },
+  club : {
+    position: 'absolute',
+    top: height * 0.02,
+    left:width * 0.50,
   },
   peopleicon: {
     position: 'absolute',

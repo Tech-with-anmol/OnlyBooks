@@ -22,6 +22,9 @@ export default function RootLayout() {
       <Stack.Screen name='DM/[id]'/>
       <Stack.Screen name='search'/>
       <Stack.Screen name='ai'/>
+      <Stack.Screen name='bookclub'/>
+      <Stack.Screen name='addClub'/>
+      <Stack.Screen name='clubs'/>
     </Stack>
     <Toast/>
     </>

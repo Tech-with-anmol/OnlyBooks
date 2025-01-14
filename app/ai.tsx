@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { client } from '@/lib/appwrite';
 import { Account, Databases, Query} from 'react-native-appwrite'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -75,26 +76,36 @@ export default function ai() {
     
     const main = async () => {
       setLoading(true);
-      const completion = await api.chat.completions.create({
-        model: "mistralai/Mistral-7B-Instruct-v0.2",
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt,
-          },
-          {
-            role: "user",
-            content: userPrompt,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      });
+      try{
+          const completion = await api.chat.completions.create({
+            model: "mistralai/Mistral-7B-Instruct-v0.2",
+            messages: [
+              {
+                role: "system",
+                content: systemPrompt,
+              },
+              {
+                role: "user",
+                content: userPrompt,
+              },
+            ],
+            temperature: 0.7,
+            max_tokens: 500,
+          });
+        
+          const response = completion.choices[0].message.content;
     
-      const response = completion.choices[0].message.content;
-
-      setAiResponse(response)
-      setLoading(false);
+          setAiResponse(response)
+        } catch(error) {
+          console.log(error)
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2 : 'There is some issue with server. Please try later'
+          })
+        } finally{
+          setLoading(false);
+        }
     };
     
   return (
