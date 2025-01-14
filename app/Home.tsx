@@ -257,6 +257,9 @@ export default function Home() {
   return (
     <GestureHandlerRootView style={styles.container}>
       <Text style={styles.logotxt}>OnlyBooks</Text>
+      <TouchableOpacity onPress={() => router.push('/ai')} style={styles.ai}>
+        <Ionicons name='bulb-outline' size={30}/>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => router.push('/search')} style={styles.notification}>
         <Ionicons name='search-outline' size={32} />
       </TouchableOpacity>
@@ -338,6 +341,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.02,
     left: width * 0.88,
+  },
+  ai: {
+    position: 'absolute',
+    top: height * 0.02,
+    left: width * 0.59,
   },
   pfpHome: {
     height: 50,

@@ -1,14 +1,15 @@
-import { View, Text, StyleSheet, Platform, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Platform, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useFonts, Poppins_400Regular } from '@expo-google-fonts/poppins';
 import * as SplashScreen from 'expo-splash-screen';
 import { client } from '@/lib/appwrite';
 import { Account, Databases, Query} from 'react-native-appwrite'
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 
 SplashScreen.preventAutoHideAsync();
-
+const {height, width} = Dimensions.get('window')
 
 export default function ai() {
 
@@ -19,6 +20,7 @@ export default function ai() {
   const [booksCollection,setBookcollection] = useState<any>([]);
   const [userPrompt, setUserPrompt] = useState('');
   const [aiResponse, setAiResponse] = useState('');
+  const [loading, setLoading] = useState(false);
 
 
     const [loaded, error] = useFonts({
@@ -31,6 +33,8 @@ export default function ai() {
         }
     }, []);
 
+   
+
     useEffect(() => {
      const fetchLibrary = async () => {
         const userData = await account.get();
@@ -42,7 +46,7 @@ export default function ai() {
         const books = userBooks.documents.map(doc => doc.Book);
   
         setBookcollection(books);
-        setUserPrompt(`Suggest at least 10 books based on these: ${booksCollection.join(', ')}`)
+        setUserPrompt(`Suggest at least 10 books based on these ( You should not use formatting options like bold, Title etc. at starting, write something intresting in bookworm language): ${booksCollection.join(', ')}`)
     };
     fetchLibrary();
   });
@@ -51,19 +55,26 @@ export default function ai() {
       return null;
     }
 
+    if(loading) {
+      return <ActivityIndicator style={{
+        alignSelf: 'center',
+        justifyContent: 'center',
+        marginTop: 400,
+      }} size='large' color='#000'/>
+    }
+
     const { OpenAI } = require("openai");
 
     const baseURL = process.env.EXPO_PUBLIC_API_URL;
     const apiKey = process.env.EXPO_PUBLIC_API_KEY;
-    const systemPrompt = "You are a book suggestion giver based on user history. Be descriptive, funny and helpful";
-    
-    
+    const systemPrompt = "You are a book suggestion giver based on user history. Be descriptive, funny and helpful.";
     const api = new OpenAI({
       apiKey,
       baseURL,
     });
     
     const main = async () => {
+      setLoading(true);
       const completion = await api.chat.completions.create({
         model: "mistralai/Mistral-7B-Instruct-v0.2",
         messages: [
@@ -77,22 +88,23 @@ export default function ai() {
           },
         ],
         temperature: 0.7,
-        max_tokens: 256,
+        max_tokens: 500,
       });
     
       const response = completion.choices[0].message.content;
 
       setAiResponse(response)
-      console.log("User:", userPrompt);
-      console.log("AI:", response);
+      setLoading(false);
     };
     
   return (
     <View style={styles.container}>
-     <TouchableOpacity onPress={() => main()}>
-      <Text>Generate</Text>
+     <TouchableOpacity style={styles.GenerateBtn} onPress={() => main()}>
+      <Ionicons name='sparkles-outline' size={40} color="rgb(218, 252, 0)" />
      </TouchableOpacity>
+     <ScrollView>
       <Text style={styles.aiOutput}>{aiResponse}</Text>
+      </ScrollView>
     </View>
   )
 }
@@ -102,12 +114,33 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'rgba(238, 229, 203, 0.8)'
     },
+
     aiOutput: {
         textAlign: 'center',
+        margin: 20,
         fontSize : 15,
         fontFamily: Platform.select({
             android: 'Poppins_ 400Medium',
             ios : 'Poppins-Medium'
         })
-    }
+    },
+    GenerateBtn : {
+      alignSelf: 'center',
+      position: 'absolute',
+      borderWidth: 0.3,
+      justifyContent: 'center',
+      marginTop: 760,
+      backgroundColor: 'rgb(0,0,0)',
+      borderRadius: 20,
+      width : width * 0.4,
+      alignItems: 'center',
+      height : 50,
+      bottom: 10,
+      zIndex: 2,
+      shadowOffset: {height: 10, width: 10},
+      shadowColor: '#000',
+      shadowOpacity: 0.9,
+      shadowRadius: 20,
+      elevation: 12,
+    },
 })

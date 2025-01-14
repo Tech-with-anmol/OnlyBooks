@@ -21,6 +21,7 @@ export default function RootLayout() {
       <Stack.Screen name='following/[id]'/>
       <Stack.Screen name='DM/[id]'/>
       <Stack.Screen name='search'/>
+      <Stack.Screen name='ai'/>
     </Stack>
     <Toast/>
     </>

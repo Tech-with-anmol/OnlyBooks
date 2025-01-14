@@ -1,4 +1,4 @@
-import { Alert, Button, View, StyleSheet, TextInput, TouchableOpacity, Dimensions, Text, Platform, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { Alert, Button, View, StyleSheet, TextInput, TouchableOpacity, Dimensions, Text, Platform, Image, ScrollView, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Editor from '@/component/dom-components/hello-dom';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -17,7 +17,9 @@ const { height, width } = Dimensions.get('window');
 SplashScreen.preventAutoHideAsync();
 
 export default function Post() {
+
   const [userData, setUserData] = useState({ email: '', name: '' });
+  const [loading, setLoading] = useState(false)
 
   const account = new Account(client);
   const database = new Databases(client);
@@ -74,6 +76,13 @@ export default function Post() {
     return null;
   }
 
+  if(loading) {
+    <ActivityIndicator style={{
+      alignSelf: 'center',
+      justifyContent: 'center',
+      marginTop: 400,
+    }} size='large' color='#000'/>
+  }
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -89,6 +98,7 @@ export default function Post() {
   };
 
   const handlePost = async () => {
+    setLoading(true);
     try {
       const userAv = await database.listDocuments('677ad7c60012a997bf2c', '677ad7d000244716f3a6', [
         Query.equal('email', userData.email)
@@ -124,6 +134,7 @@ export default function Post() {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   return (
